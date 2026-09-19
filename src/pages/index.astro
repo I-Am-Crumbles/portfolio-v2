@@ -2,8 +2,14 @@
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import { sections } from '../data/sections';
-import { profile } from '../data/resume';
 import { url } from '../data/url';
+
+// Same six destinations as the banner, in the same order.
+const explore = [
+  ...sections.map((s) => ({ href: url(`/${s.slug}/`), title: s.title, blurb: s.blurb })),
+  { href: url('/about/'), title: 'About', blurb: 'Who I am and what this site is.' },
+  { href: url('/resume/'), title: 'Resume', blurb: 'Experience, skills and certifications.' },
+];
 
 const recent = (await getCollection('writeups'))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
@@ -11,24 +17,16 @@ const recent = (await getCollection('writeups'))
 ---
 <Base>
   <section class="hero">
-    <p class="kicker">{profile.title} · {profile.location}</p>
-    <h1>Matthew Crum <span>(Crumbles)</span></h1>
-    <p class="lede">
-      Application security, hardware hacking, and photography. Writeups, projects and galleries from my lab notebook.
-    </p>
-    <p class="cta">
-      <a class="btn" href={url('/web-app-security/')}>Read the writeups</a>
-      <a class="btn ghost" href={url('/resume/')}>Resume</a>
-      <a class="btn ghost" href={url('/about/')}>About</a>
-    </p>
+    <h1>Breaking things to understand them.</h1>
+    <p class="lede">Projects, writeups, experiments, and things I found interesting enough to take apart.</p>
   </section>
 
   <h2>Explore</h2>
   <ul class="cards">
-    {sections.map((s) => (
+    {explore.map((e) => (
       <li class="card">
-        <a href={url(`/${s.slug}/`)}>{s.title}</a>
-        <p>{s.blurb}</p>
+        <a href={e.href}>{e.title}</a>
+        <p>{e.blurb}</p>
       </li>
     ))}
   </ul>
@@ -45,14 +43,8 @@ const recent = (await getCollection('writeups'))
 </Base>
 
 <style>
-  .hero { padding: 1.5rem 0 1rem; }
-  .kicker { color: var(--accent); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; font-size: 0.8rem; margin: 0; }
-  .hero h1 { font-size: clamp(2rem, 6vw, 3rem); margin: 0.3rem 0 0.6rem; }
-  .hero h1 span { color: var(--muted); font-weight: 400; font-size: 0.6em; }
-  .lede { font-size: 1.15rem; color: var(--muted); max-width: 36rem; }
-  .cta { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1.4rem; }
-  .btn { display: inline-block; padding: 0.55rem 1.1rem; border-radius: 8px; background: var(--accent); color: var(--bg); text-decoration: none; font-weight: 600; }
-  .btn.ghost { background: none; color: var(--fg); border: 1px solid var(--line); }
-  .btn:hover { filter: brightness(1.1); }
+  .hero { padding: 1.5rem 0 0.5rem; }
+  .hero h1 { font-size: clamp(1.6rem, 4.5vw, 2.1rem); margin: 0 0 0.5rem; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 40rem; margin: 0; text-wrap: balance; }
   h2 { margin-top: 2.5rem; }
 </style>
