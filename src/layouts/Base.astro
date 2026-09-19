@@ -18,6 +18,8 @@ const pageTitle = title ? `${title} · Crumbles` : 'Crumbles · Security & Photo
       <a class="brand" href={url('/')}>Crumbles</a>
       <nav>
         {sections.map((s) => <a href={url(`/${s.slug}/`)}>{s.title}</a>)}
+        <a href={url('/about/')}>About</a>
+        <a href={url('/resume/')}>Resume</a>
       </nav>
     </header>
     <main><slot /></main>

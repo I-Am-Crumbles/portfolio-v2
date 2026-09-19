@@ -1,14 +1,29 @@
 ---
+import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import { sections } from '../data/sections';
+import { profile } from '../data/resume';
 import { url } from '../data/url';
+
+const recent = (await getCollection('writeups'))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 6);
 ---
 <Base>
-  <h1>Everyone has a blog, bud.</h1>
-  <p>
-    I'm Crumbles (Matt in real life), a cybersecurity professional documenting what I learn:
-    web app security, hardware hacking, a home lab, and photography.
-  </p>
+  <section class="hero">
+    <p class="kicker">{profile.title} · {profile.location}</p>
+    <h1>Matthew Crum <span>(Crumbles)</span></h1>
+    <p class="lede">
+      Application security, hardware hacking, and photography. Writeups, projects and galleries from my lab notebook.
+    </p>
+    <p class="cta">
+      <a class="btn" href={url('/web-app-security/')}>Read the writeups</a>
+      <a class="btn ghost" href={url('/resume/')}>Resume</a>
+      <a class="btn ghost" href={url('/about/')}>About</a>
+    </p>
+  </section>
+
+  <h2>Explore</h2>
   <ul class="cards">
     {sections.map((s) => (
       <li class="card">
@@ -17,4 +32,27 @@ import { url } from '../data/url';
       </li>
     ))}
   </ul>
+
+  <h2>Recent writeups</h2>
+  <ul class="post-list">
+    {recent.map((p) => (
+      <li>
+        <time datetime={p.data.date.toISOString()}>{p.data.date.toISOString().slice(0, 10)}</time>
+        <a href={url(`/${p.id}/`)}>{p.data.title}</a>
+      </li>
+    ))}
+  </ul>
 </Base>
+
+<style>
+  .hero { padding: 1.5rem 0 1rem; }
+  .kicker { color: var(--accent); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; font-size: 0.8rem; margin: 0; }
+  .hero h1 { font-size: clamp(2rem, 6vw, 3rem); margin: 0.3rem 0 0.6rem; }
+  .hero h1 span { color: var(--muted); font-weight: 400; font-size: 0.6em; }
+  .lede { font-size: 1.15rem; color: var(--muted); max-width: 36rem; }
+  .cta { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1.4rem; }
+  .btn { display: inline-block; padding: 0.55rem 1.1rem; border-radius: 8px; background: var(--accent); color: var(--bg); text-decoration: none; font-weight: 600; }
+  .btn.ghost { background: none; color: var(--fg); border: 1px solid var(--line); }
+  .btn:hover { filter: brightness(1.1); }
+  h2 { margin-top: 2.5rem; }
+</style>
